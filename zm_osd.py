@@ -16,6 +16,7 @@ def create_ds(ccc_file):
 def main():
     ccc_file= 'ccc.txt'
     non_govt_osd, govt_osd= create_ds(ccc_file)
+    pprint.pprint(govt_osd)
     
 if __name__== '__main__':
     main()
