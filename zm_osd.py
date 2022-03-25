@@ -1,7 +1,7 @@
 import pprint, openpyxl as xl, csv
 
 CCC_FILE= 'ccc.txt'
-MASTER_FILE= 'master.xlsx'
+MASTER_FILE= 'master.csv'
 
 def create_ds(ccc_file):
     non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
@@ -21,13 +21,17 @@ def calculate_osd(master_file):
     with open(master_file, 'r') as f:
         masterDict= csv.DictReader(f)
         for item in masterDict:
-            print(item)
+            if item['OSD_REMARK'].strip()== 'OSD' and item['CONN_STAT'].strip() in ('LIVE', 'DD'):
+                if item['GOVT_STAT']== 'NO':
+                    non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][0]+= int(item['COUNT'])
+                    non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][1]+= float(item['OSD'])/100000
+                    
     return non_govt_osd, govt_osd
 
 def main():
     master_file= 'master.xlsx'
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
-    #pprint.pprint(non_govt_osd)
+    pprint.pprint(non_govt_osd)
     
 if __name__== '__main__':
     main()
