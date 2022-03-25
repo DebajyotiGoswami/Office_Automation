@@ -31,9 +31,14 @@ def calculate_osd(master_file):
                     
     return non_govt_osd, govt_osd
 
+def write_osd(non_govt_osd, govt_osd):
+    fileObj= xl.Workbook()
+    sheet= fileObj.active
+    
 def main():
     master_file= 'master.xlsx'
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
+    write_osd(non_govt_osd, govt_osd)
     pprint.pprint(govt_osd)
     
 if __name__== '__main__':
