@@ -25,13 +25,16 @@ def calculate_osd(master_file):
                 if item['GOVT_STAT']== 'NO':
                     non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][0]+= int(item['COUNT'])
                     non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][1]+= float(item['OSD'])/100000
+                elif item['GOVT_STAT']== 'YES':
+                    govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][0]+= int(item['COUNT'])
+                    govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][1]+= float(item['OSD'])/100000
                     
     return non_govt_osd, govt_osd
 
 def main():
     master_file= 'master.xlsx'
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
-    pprint.pprint(non_govt_osd)
+    pprint.pprint(govt_osd)
     
 if __name__== '__main__':
     main()
