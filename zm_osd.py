@@ -1,4 +1,4 @@
-import pprint, openpyxl
+import pprint, openpyxl as xl
 
 CCC_FILE= 'ccc.txt'
 MASTER_FILE= 'master.xlsx'
