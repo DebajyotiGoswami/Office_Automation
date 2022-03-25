@@ -1,4 +1,7 @@
-import pprint, xlsx
+import pprint, openpyxl
+
+CCC_FILE= 'ccc.txt'
+MASTER_FILE= 'master.xlsx'
 
 def create_ds(ccc_file):
     non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
@@ -13,12 +16,14 @@ def create_ds(ccc_file):
 
     return non_govt_osd, govt_osd
 
-def main():
-    ccc_file= 'ccc.txt'
-    master_file= 'master.xlsx'
+def calculate_osd(master_file):
     non_govt_osd, govt_osd= create_ds(ccc_file)
-    non_govt_osd, govt_osd= calculate_osd(non_govt_osd, govt_osd, master_file)
-    #pprint.pprint(non_govt_osd)
+    return non_govt_osd, govt_osd
+
+def main():
+    master_file= 'master.xlsx'
+    non_govt_osd, govt_osd= calculate_osd(master_file)
+    pprint.pprint(non_govt_osd)
     
 if __name__== '__main__':
     main()
