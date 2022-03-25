@@ -18,7 +18,10 @@ def create_ds(ccc_file):
 
 def calculate_osd(master_file):
     non_govt_osd, govt_osd= create_ds(CCC_FILE) #CREATING BLANK DICTIONARY FOR OSD
-
+    with open(master_file, 'r') as f:
+        masterDict= csv.DictReader(f)
+        for item in masterDict:
+            print(item)
     return non_govt_osd, govt_osd
 
 def main():
