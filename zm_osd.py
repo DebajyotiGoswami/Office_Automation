@@ -1,4 +1,5 @@
 import pprint, openpyxl as xl, csv
+from datetime import date
 
 CCC_FILE= 'ccc.txt'
 MASTER_FILE= 'master.csv'
@@ -34,12 +35,12 @@ def calculate_osd(master_file):
 def write_osd(non_govt_osd, govt_osd):
     fileObj= xl.Workbook()
     sheet= fileObj.active
+    fileObj.save(str(date.today())+'-ZM-OSD.xlsx')
     
 def main():
-    master_file= 'master.xlsx'
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
     write_osd(non_govt_osd, govt_osd)
-    pprint.pprint(govt_osd)
+    #pprint.pprint(govt_osd)
     
 if __name__== '__main__':
     main()
