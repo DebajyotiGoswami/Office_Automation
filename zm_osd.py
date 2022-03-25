@@ -1,7 +1,7 @@
-import pprint, csv
+import pprint, xlsx
 
 def create_ds(ccc_file):
-    non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'D': {}}
+    non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
     with open(ccc_file, 'r') as f:
         for line in f:
             line= line.strip()
@@ -15,10 +15,10 @@ def create_ds(ccc_file):
 
 def main():
     ccc_file= 'ccc.txt'
-    master_file= 'master.csv'
+    master_file= 'master.xlsx'
     non_govt_osd, govt_osd= create_ds(ccc_file)
     non_govt_osd, govt_osd= calculate_osd(non_govt_osd, govt_osd, master_file)
-    #pprint.pprint(govt_osd)
+    #pprint.pprint(non_govt_osd)
     
 if __name__== '__main__':
     main()
