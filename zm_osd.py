@@ -1,4 +1,4 @@
-import pprint, openpyxl as xl, csv
+import pprint, openpyxl as xl, csv, pandas as pd
 from datetime import date
 
 CCC_FILE= 'ccc.txt'
@@ -25,22 +25,26 @@ def calculate_osd(master_file):
             if item['OSD_REMARK'].strip()== 'OSD' and item['CONN_STAT'].strip() in ('LIVE', 'DD'):
                 if item['GOVT_STAT']== 'NO':
                     non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][0]+= int(item['COUNT'])
-                    non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][1]+= float(item['OSD'])/100000
+                    non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][1]+= round(float(item['OSD'])/100000,2)
                 elif item['GOVT_STAT']== 'YES':
                     govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][0]+= int(item['COUNT'])
-                    govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][1]+= float(item['OSD'])/100000
+                    govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()][1]+= round(float(item['OSD'])/100000,2)
                     
     return non_govt_osd, govt_osd
 
 def write_osd(non_govt_osd, govt_osd):
-    fileObj= xl.Workbook()
-    sheet= fileObj.active
-    fileObj.save(str(date.today())+'-ZM-OSD.xlsx')
+    #fileObj= xl.Workbook()
+    #sheet= fileObj.active
+    df= pd.DataFrame.from_dict(non_govt_osd['LIVE'], orient= 'index')
+    #df= (df.T)
+    print(df)
+    df.to_excel(str(date.today())+'-ZM-OSD.xlsx')
+    #fileObj.save(str(date.today())+'-ZM-OSD.xlsx')
     
 def main():
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
     write_osd(non_govt_osd, govt_osd)
-    #pprint.pprint(govt_osd)
+    pprint.pprint(govt_osd)
     
 if __name__== '__main__':
     main()
