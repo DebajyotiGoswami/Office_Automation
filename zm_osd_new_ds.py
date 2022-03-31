@@ -33,18 +33,20 @@ def calculate_osd(master_file):
     return non_govt_osd, govt_osd
 
 def write_osd(non_govt_osd, govt_osd):
-    df= pd.DataFrame.from_dict(non_govt_osd['LIVE'], orient= 'index')
-    df.to_excel(str(date.today())+'-ZM-OSD.xlsx', sheet_name='non_govt_osd', startrow= 2)
-    
-    df= pd.DataFrame.from_dict(non_govt_osd['DD'], orient= 'index')
-    df.to_excel(str(date.today())+'-ZM-OSD.xlsx', sheet_name='non_govt_osd', startrow= 10)
-    
-    df= pd.DataFrame.from_dict(govt_osd['LIVE'], orient= 'index')
-    df.to_excel(str(date.today())+'-ZM-OSD.xlsx', sheet_name='govt_osd', startrow= 2)
-    
-    df= pd.DataFrame.from_dict(govt_osd['DD'], orient= 'index')
-    df.to_excel(str(date.today())+'-ZM-OSD.xlsx', sheet_name='govt_osd', startrow= 10)
-    
+    writer= pd.ExcelWriter(str(date.today())+'-ZM-OSD.xlsx')
+    with writer:
+        df= pd.DataFrame.from_dict(non_govt_osd['LIVE'], orient= 'index')
+        df.to_excel(writer, sheet_name= 'live_osd', startrow= 1)
+
+        df= pd.DataFrame.from_dict(govt_osd['LIVE'], orient= 'index')
+        df.to_excel(writer, sheet_name= 'live_osd', startrow= 15)
+
+        df= pd.DataFrame.from_dict(non_govt_osd['DD'], orient= 'index')
+        df.to_excel(writer, sheet_name= 'DD_osd', startrow= 1)
+
+        df= pd.DataFrame.from_dict(govt_osd['DD'], orient= 'index')
+        df.to_excel(writer, sheet_name= 'DD_osd', startrow= 15)
+        
 def main():
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
     write_osd(non_govt_osd, govt_osd)
