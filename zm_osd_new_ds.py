@@ -34,12 +34,20 @@ def calculate_osd(master_file):
 
 def write_osd(non_govt_osd, govt_osd):
     df= pd.DataFrame.from_dict(non_govt_osd['LIVE'], orient= 'index')
-    df.to_excel(str(date.today())+'-ZM-OSD.xlsx')
+    df.to_excel(str(date.today())+'-ZM-OSD.xlsx', sheet_name='non_govt_osd', startrow= 2)
+    
+    df= pd.DataFrame.from_dict(non_govt_osd['DD'], orient= 'index')
+    df.to_excel(str(date.today())+'-ZM-OSD.xlsx', sheet_name='non_govt_osd', startrow= 10)
+    
+    df= pd.DataFrame.from_dict(govt_osd['LIVE'], orient= 'index')
+    df.to_excel(str(date.today())+'-ZM-OSD.xlsx', sheet_name='govt_osd', startrow= 2)
+    
+    df= pd.DataFrame.from_dict(govt_osd['DD'], orient= 'index')
+    df.to_excel(str(date.today())+'-ZM-OSD.xlsx', sheet_name='govt_osd', startrow= 10)
     
 def main():
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
     write_osd(non_govt_osd, govt_osd)
-    pprint.pprint(govt_osd)
     
 if __name__== '__main__':
     main()
