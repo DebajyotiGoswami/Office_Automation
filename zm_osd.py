@@ -4,7 +4,7 @@ from datetime import date
 CCC_FILE= 'ccc.txt'
 MASTER_FILE= 'master.csv'
 
-def create_ds(ccc_file):
+def create_ds_osd(ccc_file):
     non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
     with open(ccc_file, 'r') as f:
         for line in f:
@@ -18,7 +18,7 @@ def create_ds(ccc_file):
     return non_govt_osd, govt_osd
 
 def calculate_osd(master_file):
-    non_govt_osd, govt_osd= create_ds(CCC_FILE) #CREATING BLANK DICTIONARY FOR OSD
+    non_govt_osd, govt_osd= create_ds_osd(CCC_FILE) #CREATING BLANK DICTIONARY FOR OSD
     with open(master_file, 'r') as f:
         masterDict= csv.DictReader(f)
         for item in masterDict:
