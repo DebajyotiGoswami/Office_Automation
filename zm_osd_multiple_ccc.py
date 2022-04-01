@@ -39,13 +39,13 @@ def write_osd(non_govt_osd, govt_osd):
         df.to_excel(writer, sheet_name= 'live_osd', startrow= 1)
 
         df= pd.DataFrame.from_dict(govt_osd['LIVE'], orient= 'index')
-        df.to_excel(writer, sheet_name= 'live_osd', startrow= 20)
+        df.to_excel(writer, sheet_name= 'live_osd', startrow= 30)
 
         df= pd.DataFrame.from_dict(non_govt_osd['DD'], orient= 'index')
         df.to_excel(writer, sheet_name= 'DD_osd', startrow= 1)
 
         df= pd.DataFrame.from_dict(govt_osd['DD'], orient= 'index')
-        df.to_excel(writer, sheet_name= 'DD_osd', startrow= 20)
+        df.to_excel(writer, sheet_name= 'DD_osd', startrow= 30)
         
 def main():
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
