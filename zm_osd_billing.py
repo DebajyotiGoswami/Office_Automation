@@ -3,6 +3,7 @@ from datetime import date
 
 CCC_FILE= 'ccc.txt'
 MASTER_FILE= 'master.csv'
+BILLING_FILE= 'billing.csv'
 
 def create_ds_osd(ccc_file):
     non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
@@ -16,6 +17,9 @@ def create_ds_osd(ccc_file):
             govt_osd['DD'][line]= {'DTW_count': 0, 'DTW_osd': 0, 'STW_count': 0, 'STW_osd': 0, 'PHE_count': 0, 'PHE_osd': 0, 'STR_count': 0, 'STR_osd': 0, 'MUNI_count': 0, 'MUNI_osd': 0, 'OTH_count': 0, 'OTH_osd':0}
     
     return non_govt_osd, govt_osd
+
+def calculate_billing(billing_file):
+    return {}, {}
 
 def calculate_osd(master_file):
     non_govt_osd, govt_osd= create_ds_osd(CCC_FILE) #CREATING BLANK DICTIONARY FOR OSD
@@ -49,6 +53,7 @@ def write_osd(non_govt_osd, govt_osd):
         
 def main():
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
+    norm_bill, def_bill= calculate_billing(BILLING_FILE)
     write_osd(non_govt_osd, govt_osd)
     
 if __name__== '__main__':
