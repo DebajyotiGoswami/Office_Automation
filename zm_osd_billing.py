@@ -18,7 +18,23 @@ def create_ds_osd(ccc_file):
     
     return non_govt_osd, govt_osd
 
+def create_ds_billing(ccc_file):
+    norm_bill= {'1': {'D': {}, 'C': {}}, '3': {'C': {}, 'I': {}}}
+    def_bill= {'1': {}, '3': {}}
+    with open(ccc_file, 'r') as f:
+        for line in f:
+            line= line.strip()
+            norm_bill['1']['D'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '6.11_unit': 0, '7.25_count': 0, '8.25_unit': 0}
+            norm_bill['1']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '6.11_unit': 0, '7.25_count': 0, '8.25_unit': 0}
+            norm_bill['3']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '6.100_unit': 0, '7.500_unit': 0, '8.500_unit': 0}
+            norm_bill['3']['I'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5. 100_count': 0, '6.100_unit': 0, '7.500_unit': 0, '8.500_unit': 0}
+            def_bill['1'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
+            def_bill['3'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
+    return norm_bill, def_bill
+
 def calculate_billing(billing_file):
+    norm_bill, def_bill= create_ds_billing(CCC_FILE)
+    pprint.pprint(def_bill['1'])
     return {}, {}
 
 def calculate_osd(master_file):
@@ -52,9 +68,9 @@ def write_osd(non_govt_osd, govt_osd):
         df.to_excel(writer, sheet_name= 'DD_osd', startrow= 30)
         
 def main():
-    non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
+    #non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
     norm_bill, def_bill= calculate_billing(BILLING_FILE)
-    write_osd(non_govt_osd, govt_osd)
+    #write_osd(non_govt_osd, govt_osd)
     
 if __name__== '__main__':
     main()
