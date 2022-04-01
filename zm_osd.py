@@ -14,7 +14,7 @@ def create_ds(ccc_file):
 
             govt_osd['LIVE'][line]= {'DTW_count': 0, 'DTW_osd': 0, 'STW_count': 0, 'STW_osd': 0, 'PHE_count': 0, 'PHE_osd': 0, 'STR_count': 0, 'STR_osd': 0, 'MUNI_count': 0, 'MUNI_osd': 0, 'OTH_count': 0, 'OTH_osd':0}
             govt_osd['DD'][line]= {'DTW_count': 0, 'DTW_osd': 0, 'STW_count': 0, 'STW_osd': 0, 'PHE_count': 0, 'PHE_osd': 0, 'STR_count': 0, 'STR_osd': 0, 'MUNI_count': 0, 'MUNI_osd': 0, 'OTH_count': 0, 'OTH_osd':0}
-
+    
     return non_govt_osd, govt_osd
 
 def calculate_osd(master_file):
@@ -39,13 +39,13 @@ def write_osd(non_govt_osd, govt_osd):
         df.to_excel(writer, sheet_name= 'live_osd', startrow= 1)
 
         df= pd.DataFrame.from_dict(govt_osd['LIVE'], orient= 'index')
-        df.to_excel(writer, sheet_name= 'live_osd', startrow= 15)
+        df.to_excel(writer, sheet_name= 'live_osd', startrow= 30)
 
         df= pd.DataFrame.from_dict(non_govt_osd['DD'], orient= 'index')
         df.to_excel(writer, sheet_name= 'DD_osd', startrow= 1)
 
         df= pd.DataFrame.from_dict(govt_osd['DD'], orient= 'index')
-        df.to_excel(writer, sheet_name= 'DD_osd', startrow= 15)
+        df.to_excel(writer, sheet_name= 'DD_osd', startrow= 30)
         
 def main():
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
