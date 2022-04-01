@@ -34,8 +34,29 @@ def create_ds_billing(ccc_file):
 
 def calculate_billing(billing_file):
     norm_bill, def_bill= create_ds_billing(CCC_FILE)
-    pprint.pprint(def_bill['1'])
-    return {}, {}
+    with open(billing_file, 'r') as f:
+        masterDict= csv.DictReader(f)
+        for item in masterDict:
+            #print(type(item['MR_NOTE']), item['MR_NOTE'])
+            unit, mr_note, tariff, phase= float(item['UNIT']), item['MR_NOTE'], item['BASE_CLASS'], item['CONN_PHASE']
+            if phase== '1' and tariff in ('D', 'C'):
+                if unit== 0:
+                    if mr_note== '21':
+                        norm_bill[phase][tariff][item['CCC_CODE']]['3.0_adv']+= 1
+                    elif mr_note in ('991','992','993','994','995','996','997','998'):
+                        norm_bill[phase][tariff][item['CCC_CODE']]['4.0_temp']+= 1
+                    elif mr_note not in ('021','7','77','991','992','993','994','995','996','997','998'):
+                        norm_bill[phase][tariff][item['CCC_CODE']]['2.0_norm']+= 1
+                elif unit< 11:
+                    norm_bill[phase][tariff][item['CCC_CODE']]['5.11_count']+= 1
+                    norm_bill[phase][tariff][item['CCC_CODE']]['6.11_unit']+= unit
+                elif unit< 25:
+                    norm_bill[phase][tariff][item['CCC_CODE']]['7.25_count']+= 1
+                    norm_bill[phase][tariff][item['CCC_CODE']]['8.25_unit']+= unit
+                norm_bill[phase][tariff][item['CCC_CODE']]['1tot']+= 1
+                    
+                    
+    return norm_bill, def_bill
 
 def calculate_osd(master_file):
     non_govt_osd, govt_osd= create_ds_osd(CCC_FILE) #CREATING BLANK DICTIONARY FOR OSD
@@ -70,6 +91,7 @@ def write_osd(non_govt_osd, govt_osd):
 def main():
     #non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
     norm_bill, def_bill= calculate_billing(BILLING_FILE)
+    pprint.pprint(norm_bill['1'])
     #write_osd(non_govt_osd, govt_osd)
     
 if __name__== '__main__':
