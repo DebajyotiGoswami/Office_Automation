@@ -26,10 +26,11 @@ def create_ds_billing(ccc_file):
             line= line.strip()
             norm_bill['1']['D'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '5.11_unit': 0, '7.25_count': 0, '7.25_unit': 0}
             norm_bill['1']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '5.11_unit': 0, '7.25_count': 0, '7.25_unit': 0}
-            norm_bill['3']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '5.100_unit': 0, '7.500_unit': 0, '7.500_unit': 0}
-            norm_bill['3']['I'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5. 100_count': 0, '5.100_unit': 0, '7.500_unit': 0, '7.500_unit': 0}
+            norm_bill['3']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '5.100_unit': 0, '7.500_count': 0, '7.500_unit': 0}
+            norm_bill['3']['I'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '5.100_unit': 0, '7.500_count': 0, '7.500_unit': 0}
             #def_bill['1'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
             #def_bill['3'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
+    print("OSD Procedure Completed")
     return norm_bill, def_bill
 
 def calculate_billing(billing_file):
@@ -42,15 +43,13 @@ def calculate_billing(billing_file):
                     norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']]['1tot']+= int(item['COUNT'])
                     norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']][item['TYPE'].strip()]+= int(item['COUNT'])
                     unit= item['TYPE'].replace('_count', '_unit').strip()
-                    print("hello", unit, "hello")
                     if unit in norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']]:
-                        print('found')
                         norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']][unit]+= float(item['UNIT'])
                 except:
                     pass
             else:
                 pass
-                    
+    print("Billing Procedure Completed")               
     return norm_bill, def_bill
 
 def calculate_osd(master_file):
@@ -68,26 +67,38 @@ def calculate_osd(master_file):
                     
     return non_govt_osd, govt_osd
 
-def write_osd(non_govt_osd, govt_osd):
+def write_osd(non_govt_osd, govt_osd, norm_bill):
     writer= pd.ExcelWriter(str(date.today())+'-ZM-OSD.xlsx')
     with writer:
         df= pd.DataFrame.from_dict(non_govt_osd['LIVE'], orient= 'index')
-        df.to_excel(writer, sheet_name= 'live_osd', startrow= 1)
+        df.to_excel(writer, sheet_name= 'live_osd_non_govt', startrow= 1)
 
         df= pd.DataFrame.from_dict(govt_osd['LIVE'], orient= 'index')
-        df.to_excel(writer, sheet_name= 'live_osd', startrow= 30)
+        df.to_excel(writer, sheet_name= 'live_osd_govt', startrow= 1)
 
         df= pd.DataFrame.from_dict(non_govt_osd['DD'], orient= 'index')
-        df.to_excel(writer, sheet_name= 'DD_osd', startrow= 1)
+        df.to_excel(writer, sheet_name= 'DD_osd_non_govt', startrow= 1)
 
         df= pd.DataFrame.from_dict(govt_osd['DD'], orient= 'index')
-        df.to_excel(writer, sheet_name= 'DD_osd', startrow= 30)
+        df.to_excel(writer, sheet_name= 'DD_osd_govt', startrow= 1)
+
+        df= pd.DataFrame.from_dict(norm_bill['1']['D'], orient= 'index')
+        df.to_excel(writer, sheet_name= '1_PH_DOM_BILL', startrow= 1)
+
+        df= pd.DataFrame.from_dict(norm_bill['1']['C'], orient= 'index')
+        df.to_excel(writer, sheet_name= '1_PH_COM_BILL', startrow= 1)
+
+        df= pd.DataFrame.from_dict(norm_bill['3']['C'], orient= 'index')
+        df.to_excel(writer, sheet_name= '3_PH_COM_BILL', startrow= 1)
+
+        df= pd.DataFrame.from_dict(norm_bill['3']['I'], orient= 'index')
+        df.to_excel(writer, sheet_name= '3_PH_IND_BILL', startrow= 1)
         
 def main():
-    #non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
+    non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
     norm_bill, def_bill= calculate_billing(BILLING_FILE)
-    pprint.pprint(norm_bill['1'])
-    #write_osd(non_govt_osd, govt_osd)
+    #pprint.pprint(norm_bill['1'])
+    write_osd(non_govt_osd, govt_osd, norm_bill)
     
 if __name__== '__main__':
     main()
