@@ -24,10 +24,10 @@ def create_ds_billing(ccc_file):
     with open(ccc_file, 'r') as f:
         for line in f:
             line= line.strip()
-            norm_bill['1']['D'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '6.11_unit': 0, '7.25_count': 0, '8.25_unit': 0}
-            norm_bill['1']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '6.11_unit': 0, '7.25_count': 0, '8.25_unit': 0}
-            norm_bill['3']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '6.100_unit': 0, '7.500_unit': 0, '8.500_unit': 0}
-            norm_bill['3']['I'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5. 100_count': 0, '6.100_unit': 0, '7.500_unit': 0, '8.500_unit': 0}
+            norm_bill['1']['D'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '5.11_unit': 0, '7.25_count': 0, '7.25_unit': 0}
+            norm_bill['1']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '5.11_unit': 0, '7.25_count': 0, '7.25_unit': 0}
+            norm_bill['3']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '5.100_unit': 0, '7.500_unit': 0, '7.500_unit': 0}
+            norm_bill['3']['I'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5. 100_count': 0, '5.100_unit': 0, '7.500_unit': 0, '7.500_unit': 0}
             #def_bill['1'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
             #def_bill['3'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
     return norm_bill, def_bill
@@ -35,8 +35,21 @@ def create_ds_billing(ccc_file):
 def calculate_billing(billing_file):
     norm_bill, def_bill= create_ds_billing(CCC_FILE)
     with open(billing_file, 'r') as f:
-        
-                    
+        billingDict= csv.DictReader(f)
+        for item in billingDict:
+            if item['MET_STATUS']== 'HEALTHY':
+                try:
+                    norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']]['1tot']+= int(item['COUNT'])
+                    norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']][item['TYPE'].strip()]+= int(item['COUNT'])
+                    unit= item['TYPE'].replace('_count', '_unit').strip()
+                    print("hello", unit, "hello")
+                    if unit in norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']]:
+                        print('found')
+                        norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']][unit]+= float(item['UNIT'])
+                except:
+                    pass
+            else:
+                pass
                     
     return norm_bill, def_bill
 
