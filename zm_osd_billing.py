@@ -74,7 +74,7 @@ def calculate_osd(master_file):
                     
     return non_govt_osd, govt_osd
 
-def write_osd(non_govt_osd, govt_osd, norm_bill, def_bill):
+def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill):
     writer= pd.ExcelWriter(str(date.today())+'-ZM-OSD.xlsx')
     with writer:
         df= pd.DataFrame.from_dict(non_govt_osd['LIVE'], orient= 'index')
@@ -111,7 +111,7 @@ def main():
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
     norm_bill, def_bill= calculate_billing(BILLING_FILE)
     #pprint.pprint(norm_bill['1'])
-    write_osd(non_govt_osd, govt_osd, norm_bill, def_bill)
+    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill)
     
 if __name__== '__main__':
     main()
