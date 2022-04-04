@@ -28,32 +28,14 @@ def create_ds_billing(ccc_file):
             norm_bill['1']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '6.11_unit': 0, '7.25_count': 0, '8.25_unit': 0}
             norm_bill['3']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '6.100_unit': 0, '7.500_unit': 0, '8.500_unit': 0}
             norm_bill['3']['I'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5. 100_count': 0, '6.100_unit': 0, '7.500_unit': 0, '8.500_unit': 0}
-            def_bill['1'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
-            def_bill['3'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
+            #def_bill['1'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
+            #def_bill['3'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
     return norm_bill, def_bill
 
 def calculate_billing(billing_file):
     norm_bill, def_bill= create_ds_billing(CCC_FILE)
     with open(billing_file, 'r') as f:
-        masterDict= csv.DictReader(f)
-        for item in masterDict:
-            #print(type(item['MR_NOTE']), item['MR_NOTE'])
-            unit, mr_note, tariff, phase= float(item['UNIT']), item['MR_NOTE'], item['BASE_CLASS'], item['CONN_PHASE']
-            if phase== '1' and tariff in ('D', 'C'):
-                if unit== 0:
-                    if mr_note== '21':
-                        norm_bill[phase][tariff][item['CCC_CODE']]['3.0_adv']+= 1
-                    elif mr_note in ('991','992','993','994','995','996','997','998'):
-                        norm_bill[phase][tariff][item['CCC_CODE']]['4.0_temp']+= 1
-                    elif mr_note not in ('021','7','77','991','992','993','994','995','996','997','998'):
-                        norm_bill[phase][tariff][item['CCC_CODE']]['2.0_norm']+= 1
-                elif unit< 11:
-                    norm_bill[phase][tariff][item['CCC_CODE']]['5.11_count']+= 1
-                    norm_bill[phase][tariff][item['CCC_CODE']]['6.11_unit']+= unit
-                elif unit< 25:
-                    norm_bill[phase][tariff][item['CCC_CODE']]['7.25_count']+= 1
-                    norm_bill[phase][tariff][item['CCC_CODE']]['8.25_unit']+= unit
-                norm_bill[phase][tariff][item['CCC_CODE']]['1tot']+= 1
+        
                     
                     
     return norm_bill, def_bill
