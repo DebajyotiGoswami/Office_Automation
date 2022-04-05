@@ -42,7 +42,7 @@ END AS TYPE , COUNT(DISTINCT M.CON_ID) COUNT, SUM(UNIT) UNIT
 from isudata.zdemand d, isudata.rep_biz_master_detail m
 where d.con_id= m.con_id
 and d.SCH_DATE between '20220216' AND '20220315'
-AND SUBSTR(CCC_CODE, 1, 4) IN ('3157','3155','3113')
+AND SUBSTR(CCC_CODE, 1, 4) IN ('3157','3155','3113','3122')
 AND M.BASE_CLASS IN ('D','C','I')
 GROUP BY CCC_CODE, M.BASE_CLASS, CONN_PHASE, case 
 WHEN M.BASE_CLASS IN ('D','C') AND CONN_PHASE='1' AND d.REVERSAL_FLAG<>'X' THEN
