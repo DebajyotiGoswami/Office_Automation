@@ -1,0 +1,86 @@
+select CCC_CODE,m.base_class, conn_phase,
+DECODE(MR_NOTE, '007','DEF', '077','DEF', 'HEALTHY') MET_STATUS,
+case 
+WHEN M.BASE_CLASS IN ('D','C') AND CONN_PHASE='1' AND d.REVERSAL_FLAG<>'X' THEN
+  CASE 
+  WHEN MR_NOTE NOT IN ('007','077') THEN
+    CASE
+    WHEN UNIT= 0 AND MR_NOTE IN ('021') THEN '3.0_adv'
+    WHEN UNIT= 0 AND MR_NOTE IN ('991','992','993','994','995','996','997','998','999') THEN '4.0_temp'
+    WHEN UNIT= 0 AND MR_NOTE NOT IN ('991','992','993','994','995','996','997','998','999', '021') THEN '2.0_norm'
+    WHEN UNIT between 1 and 10 THEN '5.11_count'
+    WHEN UNIT between 11 and 25 THEN '7.25_count'
+    ELSE 'HEALTHY_OTH'
+    END
+  ELSE
+    CASE
+    WHEN UNIT between 0 and  10 THEN '11_count'
+    WHEN UNIT between 11 and 25 THEN '25_count'
+    WHEN UNIT between 26 and 50 THEN '50_count'
+    ELSE 'DEF_OTH'
+    END
+  END
+WHEN M.BASE_CLASS IN ('C', 'I') AND CONN_PHASE='3' AND d.REVERSAL_FLAG<>'X' THEN
+  CASE
+  WHEN MR_NOTE NOT IN ('007','077') THEN
+    CASE
+    WHEN UNIT= 0 AND MR_NOTE IN ('021') THEN '3.0_adv'
+    WHEN UNIT= 0 AND MR_NOTE IN ('991','992','993','994','995','996','997','998','999') THEN '4.0_temp'
+    WHEN UNIT= 0 AND MR_NOTE NOT IN ('991','992','993','994','995','996','997','998','999', '021') THEN '2.0_norm'
+    WHEN UNIT between 1 and 100 THEN '5.100_count'
+    WHEN UNIT between 101 and 500 THEN '7.500_count'
+    ELSE 'HEALTHY_OTH'
+    END 
+  ELSE
+    CASE
+    WHEN UNIT between 1 and  100 THEN '100_count'
+    WHEN UNIT between 101 and  250 THEN '250_count'
+    WHEN UNIT between 251 and 500 THEN '500_count'
+    END
+  END
+END AS TYPE , COUNT(DISTINCT M.CON_ID) COUNT, SUM(UNIT) UNIT
+from isudata.zdemand d, isudata.rep_biz_master_detail m
+where d.con_id= m.con_id
+and d.SCH_DATE between '20220216' AND '20220315'
+AND SUBSTR(CCC_CODE, 1, 4) IN ('3157','3155','3113')
+AND M.BASE_CLASS IN ('D','C','I')
+GROUP BY CCC_CODE, M.BASE_CLASS, CONN_PHASE, case 
+WHEN M.BASE_CLASS IN ('D','C') AND CONN_PHASE='1' AND d.REVERSAL_FLAG<>'X' THEN
+  CASE 
+  WHEN MR_NOTE NOT IN ('007','077') THEN
+    CASE
+    WHEN UNIT= 0 AND MR_NOTE IN ('021') THEN '3.0_adv'
+    WHEN UNIT= 0 AND MR_NOTE IN ('991','992','993','994','995','996','997','998','999') THEN '4.0_temp'
+    WHEN UNIT= 0 AND MR_NOTE NOT IN ('991','992','993','994','995','996','997','998','999', '021') THEN '2.0_norm'
+    WHEN UNIT between 1 and 10 THEN '5.11_count'
+    WHEN UNIT between 11 and 25 THEN '7.25_count'
+    ELSE 'HEALTHY_OTH'
+    END
+  ELSE
+    CASE
+    WHEN UNIT between 0 and  10 THEN '11_count'
+    WHEN UNIT between 11 and 25 THEN '25_count'
+    WHEN UNIT between 26 and 50 THEN '50_count'
+    ELSE 'DEF_OTH'
+    END
+  END
+WHEN M.BASE_CLASS IN ('C', 'I') AND CONN_PHASE='3' AND d.REVERSAL_FLAG<>'X' THEN
+  CASE
+  WHEN MR_NOTE NOT IN ('007','077') THEN
+    CASE
+    WHEN UNIT= 0 AND MR_NOTE IN ('021') THEN '3.0_adv'
+    WHEN UNIT= 0 AND MR_NOTE IN ('991','992','993','994','995','996','997','998','999') THEN '4.0_temp'
+    WHEN UNIT= 0 AND MR_NOTE NOT IN ('991','992','993','994','995','996','997','998','999', '021') THEN '2.0_norm'
+    WHEN UNIT between 1 and 100 THEN '5.100_count'
+    WHEN UNIT between 101 and 500 THEN '7.500_count'
+    ELSE 'HEALTHY_OTH'
+    END 
+  ELSE
+    CASE
+    WHEN UNIT between 1 and  100 THEN '100_count'
+    WHEN UNIT between 101 and  250 THEN '250_count'
+    WHEN UNIT between 251 and 500 THEN '500_count'
+    END
+  END
+END,
+DECODE(MR_NOTE, '007','DEF', '077','DEF', 'HEALTHY')
