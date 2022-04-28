@@ -4,6 +4,19 @@ from datetime import date
 CCC_FILE= 'ccc.txt'
 MASTER_FILE= 'master.csv'
 BILLING_FILE= 'billing.csv'
+OSD2_FILE= 'osd2.csv'
+
+def create_ds_osd2(ccc_file):
+    osd_slab= {'osd_5K': {}, 'osd_10K': {}, 'osd_50K': {}, 'osd_lakh': {}}
+    with open(ccc_file, 'r') as f:
+        for line in f:
+            line= line.strip()
+            osd_slab['osd_5K'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'O_count': 0, 'O_osd': 0}
+            osd_slab['osd_10K'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'O_count': 0, 'O_osd': 0}
+            osd_slab['osd_50K'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'O_count': 0, 'O_osd': 0}
+            osd_slab['osd_lakh'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'O_count': 0, 'O_osd': 0}
+
+    return osd_slab
 
 def create_ds_osd(ccc_file):
     non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
@@ -33,6 +46,24 @@ def create_ds_billing(ccc_file):
     print("OSD Procedure Completed")
     return norm_bill, def_bill
 
+def calculate_osd2(osd2_file):
+    osd_slab= create_ds_osd2(CCC_FILE)
+    
+    with open(osd2_file, 'r') as f:
+        osdDict= csv.DictReader(f)
+        for item in osdDict:
+            if item['OSD_SLAB'] not in (None, ''):
+                if item['BASE_CLASS'] in ('D', 'C', 'I'):
+                    tariff= item['BASE_CLASS']
+                else:
+                    tariff= 'O'
+                try:
+                    osd_slab[item['OSD_SLAB'].strip()][item['CCC_CODE']][tariff+'_count']+= int(item['COUNT'])
+                    osd_slab[item['OSD_SLAB'].strip()][item['CCC_CODE']][tariff+'_osd']+= float(item['OSD'])/100000
+                except KeyError:
+                    print("Some error occures. Proably unknown CCC_Code in csv file")
+    return osd_slab
+    
 def calculate_billing(billing_file):
     norm_bill, def_bill= create_ds_billing(CCC_FILE)
     with open(billing_file, 'r') as f:
@@ -74,20 +105,36 @@ def calculate_osd(master_file):
                     
     return non_govt_osd, govt_osd
 
-def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill):
+def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab):
     writer= pd.ExcelWriter(str(date.today())+'-ZM-OSD.xlsx')
     with writer:
+        ########
         df= pd.DataFrame.from_dict(non_govt_osd['LIVE'], orient= 'index')
         df.to_excel(writer, sheet_name= 'live_osd_non_govt', startrow= 1)
 
         df= pd.DataFrame.from_dict(govt_osd['LIVE'], orient= 'index')
         df.to_excel(writer, sheet_name= 'live_osd_govt', startrow= 1)
-
+        #########
+        
         df= pd.DataFrame.from_dict(non_govt_osd['DD'], orient= 'index')
         df.to_excel(writer, sheet_name= 'DD_osd_non_govt', startrow= 1)
 
         df= pd.DataFrame.from_dict(govt_osd['DD'], orient= 'index')
         df.to_excel(writer, sheet_name= 'DD_osd_govt', startrow= 1)
+
+        #########
+        df= pd.DataFrame.from_dict(osd_slab['osd_5K'], orient= 'index')
+        df.to_excel(writer, sheet_name= 'DIS_ORD_5K', startrow= 1)
+
+        df= pd.DataFrame.from_dict(osd_slab['osd_10K'], orient= 'index')
+        df.to_excel(writer, sheet_name= 'DIS_ORD_10K', startrow= 1)
+
+        df= pd.DataFrame.from_dict(osd_slab['osd_50K'], orient= 'index')
+        df.to_excel(writer, sheet_name= 'DIS_ORD_50K', startrow= 1)
+
+        df= pd.DataFrame.from_dict(osd_slab['osd_lakh'], orient= 'index')
+        df.to_excel(writer, sheet_name= 'DIS_ORD_lakh', startrow= 1)
+        ##########
 
         df= pd.DataFrame.from_dict(norm_bill['1']['D'], orient= 'index')
         df.to_excel(writer, sheet_name= '1_PH_DOM_BILL', startrow= 1)
@@ -110,8 +157,9 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill):
 def main():
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
     norm_bill, def_bill= calculate_billing(BILLING_FILE)
-    #pprint.pprint(norm_bill['1'])
-    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill)
+    osd_slab= calculate_osd2(OSD2_FILE)
+    #pprint.pprint(osd_slab)
+    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab)
     
 if __name__== '__main__':
     main()
