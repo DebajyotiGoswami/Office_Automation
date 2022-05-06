@@ -152,7 +152,9 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab):
         df.to_excel(writer, sheet_name= '1_PH_DEF_BILL', startrow= 1)
 
         df= pd.DataFrame.from_dict(def_bill['3'], orient= 'index')
-        df.to_excel(writer, sheet_name= '3_PH_DEF_BILL', startrow= 1)        
+        df.to_excel(writer, sheet_name= '3_PH_DEF_BILL', startrow= 1)
+
+        #df= pd.DataFrame.from_dict(
         
 def main():
     non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
