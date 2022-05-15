@@ -20,6 +20,28 @@ def create_ds_osd2(ccc_file):
 
 def create_ds_osd(ccc_file):
     non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
+    osd_slab= {'osd_5K': {}, 'osd_10K': {}, 'osd_50K': {}, 'osd_lakh': {}}
+    with open(ccc_file, 'r') as f:
+        for line in f:
+            line= line.strip()
+            non_govt_osd['LIVE'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'A_count': 0, 'A_osd': 0, 'O_count': 0, 'O_osd': 0}
+            non_govt_osd['DD'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'A_count': 0, 'A_osd': 0, 'O_count': 0, 'O_osd': 0}
+
+            govt_osd['LIVE'][line]= {'DTW_count': 0, 'DTW_osd': 0, 'STW_count': 0, 'STW_osd': 0, 'PHE_count': 0, 'PHE_osd': 0, 'STR_count': 0, 'STR_osd': 0, 'MUNI_count': 0, 'MUNI_osd': 0, 'OTH_count': 0, 'OTH_osd':0}
+            govt_osd['DD'][line]= {'DTW_count': 0, 'DTW_osd': 0, 'STW_count': 0, 'STW_osd': 0, 'PHE_count': 0, 'PHE_osd': 0, 'STR_count': 0, 'STR_osd': 0, 'MUNI_count': 0, 'MUNI_osd': 0, 'OTH_count': 0, 'OTH_osd':0}
+
+    with open(ccc_file, 'r') as f:
+        for line in f:
+            line= line.strip()
+            osd_slab['osd_5K'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'O_count': 0, 'O_osd': 0}
+            osd_slab['osd_10K'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'O_count': 0, 'O_osd': 0}
+            osd_slab['osd_50K'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'O_count': 0, 'O_osd': 0}
+            osd_slab['osd_lakh'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'O_count': 0, 'O_osd': 0}
+
+    return non_govt_osd, govt_osd, osd_slab
+'''
+def create_ds_osd(ccc_file):
+    non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
     with open(ccc_file, 'r') as f:
         for line in f:
             line= line.strip()
@@ -30,7 +52,7 @@ def create_ds_osd(ccc_file):
             govt_osd['DD'][line]= {'DTW_count': 0, 'DTW_osd': 0, 'STW_count': 0, 'STW_osd': 0, 'PHE_count': 0, 'PHE_osd': 0, 'STR_count': 0, 'STR_osd': 0, 'MUNI_count': 0, 'MUNI_osd': 0, 'OTH_count': 0, 'OTH_osd':0}
     
     return non_govt_osd, govt_osd
-
+'''
 def create_ds_billing(ccc_file):
     norm_bill= {'1': {'D': {}, 'C': {}}, '3': {'C': {}, 'I': {}}}
     def_bill= {'1': {}, '3': {}}
@@ -89,7 +111,7 @@ def calculate_billing(billing_file):
                     pass
     print("Billing Procedure Completed")               
     return norm_bill, def_bill
-
+'''
 def calculate_osd(master_file):
     non_govt_osd, govt_osd= create_ds_osd(CCC_FILE) #CREATING BLANK DICTIONARY FOR OSD
     with open(master_file, 'r') as f:
@@ -104,6 +126,32 @@ def calculate_osd(master_file):
                     govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_osd']+= round(float(item['OSD'])/100000,5)
                     
     return non_govt_osd, govt_osd
+'''
+
+def calculate_osd(master_file):
+    non_govt_osd, govt_osd, osd_slab= create_ds_osd(CCC_FILE) #CREATING BLANK DICTIONARY FOR OSD
+    with open(master_file, 'r') as f:
+        masterDict= csv.DictReader(f)
+        for item in masterDict:
+            if item['OSD_REMARK'].strip()== 'OSD' and item['CONN_STAT'].strip() in ('LIVE', 'DD'):
+                if item['GOVT_STAT']== 'NO':
+                    non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_count']+= int(item['COUNT'])
+                    non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_osd']+= round(float(item['OSD'])/100000,5)
+                    if item['OSD_SLAB'] not in (None, ''):
+                        if item['TYPE'].strip() in ('D', 'C', 'I'):
+                            tariff= item['TYPE'].strip()
+                        elif item['TYPE'].strip() in ('A', 'O'):
+                            tariff= 'O'
+                        try:
+                            osd_slab[item['OSD_SLAB'].strip()][item['CCC_CODE']][tariff+'_count']+= int(item['COUNT'])
+                            osd_slab[item['OSD_SLAB'].strip()][item['CCC_CODE']][tariff+'_osd']+= float(item['OSD'])/100000
+                        except KeyError:
+                            print("Some error occures. Proably unknown CCC_Code in csv file")
+                elif item['GOVT_STAT']== 'YES':
+                    govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_count']+= int(item['COUNT'])
+                    govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_osd']+= round(float(item['OSD'])/100000,5)
+                    
+    return non_govt_osd, govt_osd, osd_slab
 
 def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab):
     writer= pd.ExcelWriter(str(date.today())+'-ZM-OSD.xlsx')
@@ -157,10 +205,12 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab):
         #df= pd.DataFrame.from_dict(
         
 def main():
-    non_govt_osd, govt_osd= calculate_osd(MASTER_FILE)
+    #non_govt_osd, govt_osd= calculate_osd(MASTER_FILE) #to be modified if successfull
+    non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
+    pprint.pprint(osd_slab['osd_5K'])
     norm_bill, def_bill= calculate_billing(BILLING_FILE)
-    osd_slab= calculate_osd2(OSD2_FILE)
-    #pprint.pprint(osd_slab)
+    #osd_slab= calculate_osd2(OSD2_FILE) #to be deleted if successfull
+    pprint.pprint(osd_slab)
     write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab)
     
 if __name__== '__main__':
