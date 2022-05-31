@@ -5,7 +5,7 @@ CCC_FILE= 'ccc.txt'
 MASTER_FILE= 'master.csv'
 BILLING_FILE= 'billing.csv'
 OSD2_FILE= 'osd2.csv'
-
+'''
 def create_ds_osd2(ccc_file):
     osd_slab= {'osd_5K': {}, 'osd_10K': {}, 'osd_50K': {}, 'osd_lakh': {}}
     with open(ccc_file, 'r') as f:
@@ -17,7 +17,7 @@ def create_ds_osd2(ccc_file):
             osd_slab['osd_lakh'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'O_count': 0, 'O_osd': 0}
 
     return osd_slab
-
+'''
 def create_ds_osd(ccc_file):
     non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
     osd_slab= {'osd_5K': {}, 'osd_10K': {}, 'osd_50K': {}, 'osd_lakh': {}}
@@ -67,7 +67,7 @@ def create_ds_billing(ccc_file):
             def_bill['3'][line]= {'1.tot': 0, '100_count': 0, '100_unit': 0, '250_count': 0,'250_unit': 0, '500_count': 0, '500_unit': 0}
     print("OSD Procedure Completed")
     return norm_bill, def_bill
-
+'''
 def calculate_osd2(osd2_file):
     osd_slab= create_ds_osd2(CCC_FILE)
     
@@ -85,7 +85,7 @@ def calculate_osd2(osd2_file):
                 except KeyError:
                     print("Some error occures. Proably unknown CCC_Code in csv file")
     return osd_slab
-    
+'''
 def calculate_billing(billing_file):
     norm_bill, def_bill= create_ds_billing(CCC_FILE)
     with open(billing_file, 'r') as f:
@@ -207,10 +207,10 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab):
 def main():
     #non_govt_osd, govt_osd= calculate_osd(MASTER_FILE) #to be modified if successfull
     non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
-    pprint.pprint(osd_slab['osd_5K'])
+    #pprint.pprint(osd_slab['osd_5K'])
     norm_bill, def_bill= calculate_billing(BILLING_FILE)
     #osd_slab= calculate_osd2(OSD2_FILE) #to be deleted if successfull
-    pprint.pprint(osd_slab)
+    #pprint.pprint(osd_slab)
     write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab)
     
 if __name__== '__main__':
