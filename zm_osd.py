@@ -56,6 +56,7 @@ def create_ds_osd(ccc_file):
 def create_ds_billing(ccc_file):
     norm_bill= {'1': {'D': {}, 'C': {}}, '3': {'C': {}, 'I': {}}}
     def_bill= {'1': {}, '3': {}}
+    bill_master= {}
     with open(ccc_file, 'r') as f:
         for line in f:
             line= line.strip()
@@ -65,8 +66,12 @@ def create_ds_billing(ccc_file):
             norm_bill['3']['I'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '5.100_unit': 0, '7.500_count': 0, '7.500_unit': 0}
             def_bill['1'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
             def_bill['3'][line]= {'1.tot': 0, '100_count': 0, '100_unit': 0, '250_count': 0,'250_unit': 0, '500_count': 0, '500_unit': 0}
-    print("OSD Procedure Completed")
-    return norm_bill, def_bill
+            
+            con_master[line]= {'D_Live': 0, 'D_TD': 0, 'D_PD': 0, 'C_Live': 0, 'C_TD': 0, 'C_PD': 0, 'I_Live': 0, 'I_TD': 0, 'I_PD': 0,\
+                               'stw_Live': 0, 'stw_TD': 0, 'stw_PD': 0, 'DTW_Live': 0, 'DTW_TD': 0, 'DTW_PD': 0, 'PHE_Live': 0,\
+                               'PHE_TD': 0, 'PHE_PD': 0, 'STR_Live': 0, 'STR_TD': 0, 'STR_PD': 0, 'oth_Live': 0, 'oth_TD': 0, 'oth_PD': 0}
+   
+    return norm_bill, def_bill, con_master
 '''
 def calculate_osd2(osd2_file):
     osd_slab= create_ds_osd2(CCC_FILE)
@@ -87,7 +92,7 @@ def calculate_osd2(osd2_file):
     return osd_slab
 '''
 def calculate_billing(billing_file):
-    norm_bill, def_bill= create_ds_billing(CCC_FILE)
+    norm_bill, def_bill, bill_master= create_ds_billing(CCC_FILE)
     with open(billing_file, 'r') as f:
         billingDict= csv.DictReader(f)
         for item in billingDict:
@@ -150,7 +155,8 @@ def calculate_osd(master_file):
                 elif item['GOVT_STAT']== 'YES':
                     govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_count']+= int(item['COUNT'])
                     govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_osd']+= round(float(item['OSD'])/100000,5)
-                    
+
+    print("OSD Procedure Completed") 
     return non_govt_osd, govt_osd, osd_slab
 
 def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master):
@@ -234,14 +240,11 @@ def calculate_format_2_master(master_file):
     return con_master
 
 def main():
-    #non_govt_osd, govt_osd= calculate_osd(MASTER_FILE) #to be modified if successfull
-    non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
-    #pprint.pprint(osd_slab['osd_5K'])
-    norm_bill, def_bill= calculate_billing(BILLING_FILE)
-    #osd_slab= calculate_osd2(OSD2_FILE) #to be deleted if successfull
-    #pprint.pprint(osd_slab)
-    con_master= calculate_format_2_master(MASTER_FILE)
-    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master)
+    #non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
+    norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
+    print(bill_master['3157101'])
+    #con_master= calculate_format_2_master(MASTER_FILE)
+    #write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master)
     
 if __name__== '__main__':
     main()
