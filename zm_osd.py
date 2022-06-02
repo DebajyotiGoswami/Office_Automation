@@ -206,15 +206,14 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab):
 
 def create_ds_master(ccc_file):
     con_master= {}
-    '''
-    non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
-    osd_slab= {'osd_5K': {}, 'osd_10K': {}, 'osd_50K': {}, 'osd_lakh': {}}
     with open(ccc_file, 'r') as f:
         for line in f:
             line= line.strip()
-            non_govt_osd['LIVE'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'A_count': 0, 'A_osd': 0, 'O_count': 0, 'O_osd': 0}
-            non_govt_osd['DD'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'A_count': 0, 'A_osd': 0, 'O_count': 0, 'O_osd': 0}
-    '''
+            con_master[line]= {'D_Live': 0, 'D_TD': 0, 'D_PD': 0, 'C_Live': 0, 'C_TD': 0, 'C_PD': 0, 'I_Live': 0, 'I_TD': 0, 'I_PD': 0,\
+                               'stw_Live': 0, 'stw_TD': 0, 'stw_PD': 0, 'dtw_Live': 0, 'dtw_TD': 0, 'dtw_PD': 0, 'phe_Live': 0,\
+                               'phe_TD': 0, 'phe_PD': 0, 'str_Live': 0, 'str_TD': 0, 'str_PD': 0, 'oth_Live': 0, 'oth_TD': 0, 'oth_PD': 0}
+    return con_master
+
 def calculate_format_2_master(master_file):
     con_master= create_ds_master(CCC_FILE)
     return con_master
