@@ -67,11 +67,11 @@ def create_ds_billing(ccc_file):
             def_bill['1'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
             def_bill['3'][line]= {'1.tot': 0, '100_count': 0, '100_unit': 0, '250_count': 0,'250_unit': 0, '500_count': 0, '500_unit': 0}
             
-            con_master[line]= {'D_Live': 0, 'D_TD': 0, 'D_PD': 0, 'C_Live': 0, 'C_TD': 0, 'C_PD': 0, 'I_Live': 0, 'I_TD': 0, 'I_PD': 0,\
+            bill_master[line]= {'D_Live': 0, 'D_TD': 0, 'D_PD': 0, 'C_Live': 0, 'C_TD': 0, 'C_PD': 0, 'I_Live': 0, 'I_TD': 0, 'I_PD': 0,\
                                'stw_Live': 0, 'stw_TD': 0, 'stw_PD': 0, 'DTW_Live': 0, 'DTW_TD': 0, 'DTW_PD': 0, 'PHE_Live': 0,\
                                'PHE_TD': 0, 'PHE_PD': 0, 'STR_Live': 0, 'STR_TD': 0, 'STR_PD': 0, 'oth_Live': 0, 'oth_TD': 0, 'oth_PD': 0}
    
-    return norm_bill, def_bill, con_master
+    return norm_bill, def_bill, bill_master
 '''
 def calculate_osd2(osd2_file):
     osd_slab= create_ds_osd2(CCC_FILE)
@@ -105,7 +105,7 @@ def calculate_billing(billing_file):
                         norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']][unit]+= float(item['UNIT'])
                 except:
                     pass
-            else:
+            elif item['BASE_CLASS'] in ('D', 'C', 'I'):
                 try:
                     def_bill[item['CONN_PHASE']][item['CCC_CODE']]['1.tot']+= int(item['COUNT'])
                     def_bill[item['CONN_PHASE']][item['CCC_CODE']][item['TYPE'].strip()]+= int(item['COUNT'])
@@ -114,8 +114,22 @@ def calculate_billing(billing_file):
                         def_bill[item['CONN_PHASE']][item['CCC_CODE']][unit]+= float(item['UNIT'])
                 except:
                     pass
+            '''  
+            con_type= item['TYPE'].strip()
+            dis_stat= item['DIS_STAT'].strip()
+            count= int(item['COUNT'].strip())
+            
+            if dis_stat in ('Live', 'TD', 'PD'):
+                if con_type in ('C', 'D', 'DTW', 'I', 'PHE', 'STR'):
+                    bill_master[item['CCC_CODE']][con_type + '_' + dis_stat]+= count
+                elif item['TYPE'] in ('A', 'STW'):
+                    bill_master[item['CCC_CODE']]['stw' + '_' + dis_stat]+= count
+                else:
+                    bill_master[item['CCC_CODE']]['oth' + '_' + dis_stat]+= count
+            '''
     print("Billing Procedure Completed")               
-    return norm_bill, def_bill
+    return norm_bill, def_bill, bill_master
+
 '''
 def calculate_osd(master_file):
     non_govt_osd, govt_osd= create_ds_osd(CCC_FILE) #CREATING BLANK DICTIONARY FOR OSD
@@ -240,11 +254,11 @@ def calculate_format_2_master(master_file):
     return con_master
 
 def main():
-    #non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
+    non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
     norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
     print(bill_master['3157101'])
-    #con_master= calculate_format_2_master(MASTER_FILE)
-    #write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master)
+    con_master= calculate_format_2_master(MASTER_FILE)
+    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master)
     
 if __name__== '__main__':
     main()
