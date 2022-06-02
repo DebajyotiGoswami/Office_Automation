@@ -234,12 +234,8 @@ def calculate_format_2_master(master_file):
     return con_master
 
 def main():
-    #non_govt_osd, govt_osd= calculate_osd(MASTER_FILE) #to be modified if successfull
     non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
-    #pprint.pprint(osd_slab['osd_5K'])
     norm_bill, def_bill= calculate_billing(BILLING_FILE)
-    #osd_slab= calculate_osd2(OSD2_FILE) #to be deleted if successfull
-    #pprint.pprint(osd_slab)
     con_master= calculate_format_2_master(MASTER_FILE)
     write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master)
     
