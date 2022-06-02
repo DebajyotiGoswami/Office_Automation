@@ -210,13 +210,27 @@ def create_ds_master(ccc_file):
         for line in f:
             line= line.strip()
             con_master[line]= {'D_Live': 0, 'D_TD': 0, 'D_PD': 0, 'C_Live': 0, 'C_TD': 0, 'C_PD': 0, 'I_Live': 0, 'I_TD': 0, 'I_PD': 0,\
-                               'stw_Live': 0, 'stw_TD': 0, 'stw_PD': 0, 'dtw_Live': 0, 'dtw_TD': 0, 'dtw_PD': 0, 'phe_Live': 0,\
-                               'phe_TD': 0, 'phe_PD': 0, 'str_Live': 0, 'str_TD': 0, 'str_PD': 0, 'oth_Live': 0, 'oth_TD': 0, 'oth_PD': 0}
+                               'stw_Live': 0, 'stw_TD': 0, 'stw_PD': 0, 'DTW_Live': 0, 'DTW_TD': 0, 'DTW_PD': 0, 'PHE_Live': 0,\
+                               'PHE_TD': 0, 'PHE_PD': 0, 'STR_Live': 0, 'STR_TD': 0, 'STR_PD': 0, 'oth_Live': 0, 'oth_TD': 0, 'oth_PD': 0}
     return con_master
 
 def calculate_format_2_master(master_file):
     con_master= create_ds_master(CCC_FILE)
-    return con_master
+    with open(master_file, 'r') as f:
+        masterDict= csv.DictReader(f)
+        for item in masterDict:
+            con_type= item['TYPE'].strip()
+            dis_stat= item['DIS_STAT'].strip()
+            count= int(item['COUNT'].strip())
+            if dis_stat in ('Live', 'TD', 'PD'):
+                if con_type in ('C', 'D', 'DTW', 'I', 'PHE', 'STR'):
+                    con_master[item['CCC_CODE']][con_type + '_' + dis_stat]+= count
+                elif item['TYPE'] in ('A', 'STW'):
+                    con_master[item['CCC_CODE']]['stw' + '_' + dis_stat]+= count
+                else:
+                    con_master[item['CCC_CODE']]['oth' + '_' + dis_stat]+= count
+
+    return con_master['3157101']
 
 def main():
     #non_govt_osd, govt_osd= calculate_osd(MASTER_FILE) #to be modified if successfull
