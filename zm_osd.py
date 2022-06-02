@@ -203,15 +203,32 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab):
         df.to_excel(writer, sheet_name= '3_PH_DEF_BILL', startrow= 1)
 
         #df= pd.DataFrame.from_dict(
-        
+
+def create_ds_master(ccc_file):
+    con_master= {}
+    '''
+    non_govt_osd, govt_osd= {'LIVE': {}, 'DD': {}}, {'LIVE': {}, 'DD': {}}
+    osd_slab= {'osd_5K': {}, 'osd_10K': {}, 'osd_50K': {}, 'osd_lakh': {}}
+    with open(ccc_file, 'r') as f:
+        for line in f:
+            line= line.strip()
+            non_govt_osd['LIVE'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'A_count': 0, 'A_osd': 0, 'O_count': 0, 'O_osd': 0}
+            non_govt_osd['DD'][line]= {'D_count': 0, 'D_osd': 0, 'C_count': 0, 'C_osd': 0, 'I_count': 0, 'I_osd': 0, 'A_count': 0, 'A_osd': 0, 'O_count': 0, 'O_osd': 0}
+    '''
+def calculate_format_2_master(master_file):
+    con_master= create_ds_master(CCC_FILE)
+    return con_master
+
 def main():
     #non_govt_osd, govt_osd= calculate_osd(MASTER_FILE) #to be modified if successfull
-    non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
+    #non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
     #pprint.pprint(osd_slab['osd_5K'])
-    norm_bill, def_bill= calculate_billing(BILLING_FILE)
+    #norm_bill, def_bill= calculate_billing(BILLING_FILE)
     #osd_slab= calculate_osd2(OSD2_FILE) #to be deleted if successfull
     #pprint.pprint(osd_slab)
-    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab)
+    con_master= calculate_format_2_master(MASTER_FILE)
+    print(con_master)
+    #write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab)
     
 if __name__== '__main__':
     main()
