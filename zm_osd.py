@@ -168,7 +168,7 @@ def calculate_osd(master_file):
     print("OSD Procedure Completed") 
     return non_govt_osd, govt_osd, osd_slab
 
-def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master):
+def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master):
     writer= pd.ExcelWriter(str(date.today())+'-ZM-OSD.xlsx')
     with writer:
         ########
@@ -217,8 +217,12 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con
         df= pd.DataFrame.from_dict(def_bill['3'], orient= 'index')
         df.to_excel(writer, sheet_name= '3_PH_DEF_BILL', startrow= 1)
 
+        #lets write to format 2 (master data, billing data)
         df= pd.DataFrame.from_dict(con_master, orient= 'index')
-        df.to_excel(writer, sheet_name='format_2_master', startrow= 1)
+        df.to_excel(writer, sheet_name='format_2_master', startrow= 1) # master data written
+
+        df= pd.DataFrame.from_dict(bill_master, orient= 'index') 
+        df.to_excel(writer, sheet_name='format_2_billing', startrow= 1) # billing data written
 
 def create_ds_master(ccc_file):
     con_master= {}
@@ -253,7 +257,7 @@ def main():
     norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
     print(bill_master['3157101'])
     con_master= calculate_format_2_master(MASTER_FILE)
-    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master)
+    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master)
     
 if __name__== '__main__':
     main()
