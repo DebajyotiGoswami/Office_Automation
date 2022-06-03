@@ -68,8 +68,8 @@ def create_ds_billing(ccc_file):
             def_bill['3'][line]= {'1.tot': 0, '100_count': 0, '100_unit': 0, '250_count': 0,'250_unit': 0, '500_count': 0, '500_unit': 0}
             
             bill_master[line]= {'D_Live': 0, 'D_TD': 0, 'D_PD': 0, 'C_Live': 0, 'C_TD': 0, 'C_PD': 0, 'I_Live': 0, 'I_TD': 0, 'I_PD': 0,\
-                               'stw_Live': 0, 'stw_TD': 0, 'stw_PD': 0, 'DTW_Live': 0, 'DTW_TD': 0, 'DTW_PD': 0, 'PHE_Live': 0,\
-                               'PHE_TD': 0, 'PHE_PD': 0, 'STR_Live': 0, 'STR_TD': 0, 'STR_PD': 0, 'oth_Live': 0, 'oth_TD': 0, 'oth_PD': 0}
+                               'STW_Live': 0, 'STW_TD': 0, 'STW_PD': 0, 'DTW_Live': 0, 'DTW_TD': 0, 'DTW_PD': 0, 'PHE_Live': 0,\
+                               'PHE_TD': 0, 'PHE_PD': 0, 'STR_Live': 0, 'STR_TD': 0, 'STR_PD': 0, 'OTH_Live': 0, 'OTH_TD': 0, 'OTH_PD': 0}
    
     return norm_bill, def_bill, bill_master
 '''
@@ -114,19 +114,14 @@ def calculate_billing(billing_file):
                         def_bill[item['CONN_PHASE']][item['CCC_CODE']][unit]+= float(item['UNIT'])
                 except:
                     pass
-            '''  
-            con_type= item['TYPE'].strip()
+            
+            con_type= item['CON_TYPE'].strip()
             dis_stat= item['DIS_STAT'].strip()
             count= int(item['COUNT'].strip())
             
             if dis_stat in ('Live', 'TD', 'PD'):
-                if con_type in ('C', 'D', 'DTW', 'I', 'PHE', 'STR'):
-                    bill_master[item['CCC_CODE']][con_type + '_' + dis_stat]+= count
-                elif item['TYPE'] in ('A', 'STW'):
-                    bill_master[item['CCC_CODE']]['stw' + '_' + dis_stat]+= count
-                else:
-                    bill_master[item['CCC_CODE']]['oth' + '_' + dis_stat]+= count
-            '''
+                bill_master[item['CCC_CODE']][con_type + '_' + dis_stat]+= count
+            
     print("Billing Procedure Completed")               
     return norm_bill, def_bill, bill_master
 
