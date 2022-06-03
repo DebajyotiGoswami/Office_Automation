@@ -56,6 +56,7 @@ def create_ds_osd(ccc_file):
 def create_ds_billing(ccc_file):
     norm_bill= {'1': {'D': {}, 'C': {}}, '3': {'C': {}, 'I': {}}}
     def_bill= {'1': {}, '3': {}}
+    bill_master= {}
     with open(ccc_file, 'r') as f:
         for line in f:
             line= line.strip()
@@ -65,8 +66,12 @@ def create_ds_billing(ccc_file):
             norm_bill['3']['I'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '5.100_unit': 0, '7.500_count': 0, '7.500_unit': 0}
             def_bill['1'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
             def_bill['3'][line]= {'1.tot': 0, '100_count': 0, '100_unit': 0, '250_count': 0,'250_unit': 0, '500_count': 0, '500_unit': 0}
-    print("OSD Procedure Completed")
-    return norm_bill, def_bill
+            
+            bill_master[line]= {'D_Live': 0, 'D_TD': 0, 'D_PD': 0, 'C_Live': 0, 'C_TD': 0, 'C_PD': 0, 'I_Live': 0, 'I_TD': 0, 'I_PD': 0,\
+                               'STW_Live': 0, 'STW_TD': 0, 'STW_PD': 0, 'DTW_Live': 0, 'DTW_TD': 0, 'DTW_PD': 0, 'PHE_Live': 0,\
+                               'PHE_TD': 0, 'PHE_PD': 0, 'STR_Live': 0, 'STR_TD': 0, 'STR_PD': 0, 'OTH_Live': 0, 'OTH_TD': 0, 'OTH_PD': 0}
+   
+    return norm_bill, def_bill, bill_master
 '''
 def calculate_osd2(osd2_file):
     osd_slab= create_ds_osd2(CCC_FILE)
@@ -87,7 +92,7 @@ def calculate_osd2(osd2_file):
     return osd_slab
 '''
 def calculate_billing(billing_file):
-    norm_bill, def_bill= create_ds_billing(CCC_FILE)
+    norm_bill, def_bill, bill_master= create_ds_billing(CCC_FILE)
     with open(billing_file, 'r') as f:
         billingDict= csv.DictReader(f)
         for item in billingDict:
@@ -100,7 +105,7 @@ def calculate_billing(billing_file):
                         norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']][unit]+= float(item['UNIT'])
                 except:
                     pass
-            else:
+            elif item['BASE_CLASS'] in ('D', 'C', 'I'):
                 try:
                     def_bill[item['CONN_PHASE']][item['CCC_CODE']]['1.tot']+= int(item['COUNT'])
                     def_bill[item['CONN_PHASE']][item['CCC_CODE']][item['TYPE'].strip()]+= int(item['COUNT'])
@@ -109,8 +114,17 @@ def calculate_billing(billing_file):
                         def_bill[item['CONN_PHASE']][item['CCC_CODE']][unit]+= float(item['UNIT'])
                 except:
                     pass
+            
+            con_type= item['CON_TYPE'].strip()
+            dis_stat= item['DIS_STAT'].strip()
+            count= int(item['COUNT'].strip())
+            
+            if dis_stat in ('Live', 'TD', 'PD'):
+                bill_master[item['CCC_CODE']][con_type + '_' + dis_stat]+= count
+            
     print("Billing Procedure Completed")               
-    return norm_bill, def_bill
+    return norm_bill, def_bill, bill_master
+
 '''
 def calculate_osd(master_file):
     non_govt_osd, govt_osd= create_ds_osd(CCC_FILE) #CREATING BLANK DICTIONARY FOR OSD
@@ -150,10 +164,11 @@ def calculate_osd(master_file):
                 elif item['GOVT_STAT']== 'YES':
                     govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_count']+= int(item['COUNT'])
                     govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_osd']+= round(float(item['OSD'])/100000,5)
-                    
+
+    print("OSD Procedure Completed") 
     return non_govt_osd, govt_osd, osd_slab
 
-def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master):
+def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master):
     writer= pd.ExcelWriter(str(date.today())+'-ZM-OSD.xlsx')
     with writer:
         ########
@@ -202,8 +217,12 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con
         df= pd.DataFrame.from_dict(def_bill['3'], orient= 'index')
         df.to_excel(writer, sheet_name= '3_PH_DEF_BILL', startrow= 1)
 
+        #lets write to format 2 (master data, billing data)
         df= pd.DataFrame.from_dict(con_master, orient= 'index')
-        df.to_excel(writer, sheet_name='format_2_master', startrow= 1)
+        df.to_excel(writer, sheet_name='format_2_master', startrow= 1) # master data written
+
+        df= pd.DataFrame.from_dict(bill_master, orient= 'index') 
+        df.to_excel(writer, sheet_name='format_2_billing', startrow= 1) # billing data written
 
 def create_ds_master(ccc_file):
     con_master= {}
@@ -235,9 +254,10 @@ def calculate_format_2_master(master_file):
 
 def main():
     non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
-    norm_bill, def_bill= calculate_billing(BILLING_FILE)
+    norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
+    print(bill_master['3157101'])
     con_master= calculate_format_2_master(MASTER_FILE)
-    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master)
+    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master)
     
 if __name__== '__main__':
     main()
