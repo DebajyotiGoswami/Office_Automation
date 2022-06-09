@@ -245,7 +245,7 @@ def calculate_format_2_master(master_file):
             if dis_stat in ('Live', 'TD', 'PD'):
                 if con_type in ('C', 'D', 'DTW', 'I', 'PHE', 'STR'):
                     con_master[item['CCC_CODE']][con_type + '_' + dis_stat]+= count
-                elif item['TYPE'] in ('A', 'STW'):
+                elif con_type in ('A', 'STW'):
                     con_master[item['CCC_CODE']]['stw' + '_' + dis_stat]+= count
                 else:
                     con_master[item['CCC_CODE']]['oth' + '_' + dis_stat]+= count
