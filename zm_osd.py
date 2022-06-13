@@ -290,16 +290,16 @@ def calculate_dd_osd(dd_file):
                 dd_master[govt_type][item['CCC_CODE']][osd_slab+ '_C']+= count
                 dd_master[govt_type][item['CCC_CODE']][osd_slab+ '_S']+= osd/100000
             
-    return dd_master
+    return dd_master, dd_sd
 
 def main():
-    non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
-    norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
-    dd_master= calculate_dd_osd(DD_FILE)
-    print(dd_master['non_govt']['3157101'])
+    #non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
+    #norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
+    dd_master, dd_sd= calculate_dd_osd(DD_FILE)
+    print(dd_sd)
     print(dd_master['govt']['3157101'])
-    con_master= calculate_format_2_master(MASTER_FILE)
-    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master, dd_master)
+    #con_master= calculate_format_2_master(MASTER_FILE)
+    #write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master, dd_master)
     
 if __name__== '__main__':
     main()
