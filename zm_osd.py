@@ -267,8 +267,8 @@ def create_ds_dd(ccc_file):
     with open(ccc_file, 'r') as f:
         for line in f:
             line= line.strip()
-            dd_master['non_govt'][line]= {'UPTO_0': 0, 'UPTO_100_C': 0, 'UPTO_100_S': 0, 'UPTO_10000_C': 0, 'UPTO_10000_S':0, 'UPTO_100000_C': 0, 'UPTO_100000_S': 0, 'ABOVE_100000_C': 0, 'ABOVE_100000_S': 0}
-            dd_master['govt'][line]= {'UPTO_0': 0, 'UPTO_100_C': 0, 'UPTO_100_S': 0, 'UPTO_10000_C': 0, 'UPTO_10000_S':0, 'UPTO_100000_C': 0, 'UPTO_100000_S': 0, 'ABOVE_100000_C': 0, 'ABOVE_100000_S': 0}
+            dd_master['non_govt'][line]= {'UPTO_0_C': 0, 'UPTO_0_S': 0, 'UPTO_100_C': 0, 'UPTO_100_S': 0, 'UPTO_10000_C': 0, 'UPTO_10000_S':0, 'UPTO_100000_C': 0, 'UPTO_100000_S': 0, 'ABOVE_100000_C': 0, 'ABOVE_100000_S': 0}
+            dd_master['govt'][line]= {'UPTO_0_C': 0, 'UPTO_0_S': 0, 'UPTO_100_C': 0, 'UPTO_100_S': 0, 'UPTO_10000_C': 0, 'UPTO_10000_S':0, 'UPTO_100000_C': 0, 'UPTO_100000_S': 0, 'ABOVE_100000_C': 0, 'ABOVE_100000_S': 0}
 
     return dd_master, dd_sd
 
@@ -279,7 +279,9 @@ def calculate_dd_osd(dd_file):
         for item in masterDict:
             govt_type, osd_slab= item['GOVT_STAT'].strip(), item['OSD_SLAB'].strip()
             count, sd, osd= int(item['COUNT'].strip()), float(item['SD'].strip()), float(item['OSD'].strip())
-            dd_master[govt_type][item['CCC_CODE']]['UPTO_0']+= count
+            dd_master[govt_type][item['CCC_CODE']][osd_slab+ '_C']+= count
+            dd_master[govt_type][item['CCC_CODE']][osd_slab+ '_S']+= osd/100000
+            
     return dd_master
 
 def main():
