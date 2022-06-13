@@ -276,7 +276,8 @@ def create_ds_dd(ccc_file):
             line= line.strip()
             dd_master['non_govt'][line]= {'UPTO_0_C': 0, 'UPTO_0_S': 0, 'UPTO_100_C': 0, 'UPTO_100_S': 0, 'UPTO_10000_C': 0, 'UPTO_10000_S':0, 'UPTO_100000_C': 0, 'UPTO_100000_S': 0, 'ABOVE_100000_C': 0, 'ABOVE_100000_S': 0}
             dd_master['govt'][line]= {'UPTO_0_C': 0, 'UPTO_0_S': 0, 'UPTO_100_C': 0, 'UPTO_100_S': 0, 'UPTO_10000_C': 0, 'UPTO_10000_S':0, 'UPTO_100000_C': 0, 'UPTO_100000_S': 0, 'ABOVE_100000_C': 0, 'ABOVE_100000_S': 0}
-
+            dd_sd[line]= {'NO_OSD_NO_SD_C': 0, 'NO_OSD_NO_SD_S': 0, 'NO_OSD_HAVE_SD_C': 0, 'NO_OSD_HAVE_SD_S': 0, 'HAVE_OSD_NO_SD_C': 0, 'HAVE_OSD_NO_SD_S': 0, 'HAVE_OSD_HAVE_SD_C': 0, 'HAVE_OSD_HAVE_SD_S': 0}
+            
     return dd_master, dd_sd
 
 def calculate_dd_osd(dd_file):
@@ -284,19 +285,20 @@ def calculate_dd_osd(dd_file):
     with open(dd_file, 'r') as f:
         masterDict= csv.DictReader(f)
         for item in masterDict:
-            govt_type, osd_slab= item['GOVT_STAT'].strip(), item['OSD_SLAB'].strip()
+            govt_type, osd_slab, osd_type= item['GOVT_STAT'].strip(), item['OSD_SLAB'].strip(),item['OSD_SD_1'].strip()
             count, sd, osd= int(item['COUNT'].strip()), float(item['SD'].strip()), float(item['OSD'].strip())
             if item['CONN_STAT'].strip()== 'DD':
                 dd_master[govt_type][item['CCC_CODE']][osd_slab+ '_C']+= count
                 dd_master[govt_type][item['CCC_CODE']][osd_slab+ '_S']+= osd/100000
-            
+                dd_sd[item['CCC_CODE']][osd_type+'_C']+= count
+                dd_sd[item['CCC_CODE']][osd_type+'_S']+= sd/100000
     return dd_master, dd_sd
 
 def main():
     #non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
     #norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
     dd_master, dd_sd= calculate_dd_osd(DD_FILE)
-    print(dd_sd)
+    print(dd_sd['3157104'])
     print(dd_master['govt']['3157101'])
     #con_master= calculate_format_2_master(MASTER_FILE)
     #write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master, dd_master)
