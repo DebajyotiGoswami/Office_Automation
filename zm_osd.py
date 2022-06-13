@@ -171,7 +171,7 @@ def calculate_osd(master_file):
     print("OSD Procedure Completed") 
     return non_govt_osd, govt_osd, osd_slab
 
-def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master, dd_master):
+def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master, dd_master, dd_sd):
     writer= pd.ExcelWriter(str(date.today())+'-ZM-OSD.xlsx')
     with writer:
         ########
@@ -200,6 +200,14 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con
 
         df= pd.DataFrame.from_dict(dd_master['govt'], orient= 'index')
         df.to_excel(writer, sheet_name= 'breakup_dd_govt', startrow= 1)
+
+        #########
+        
+        df= pd.DataFrame.from_dict(dd_sd, orient= 'index')
+        df.to_excel(writer, sheet_name= 'dd_analysis', startrow= 1)
+
+        #df= pd.DataFrame.from_dict(dd_master['govt'], orient= 'index')
+        #df.to_excel(writer, sheet_name= 'breakup_dd_govt', startrow= 1)
 
         #########
         df= pd.DataFrame.from_dict(osd_slab['osd_5K'], orient= 'index')
@@ -295,13 +303,13 @@ def calculate_dd_osd(dd_file):
     return dd_master, dd_sd
 
 def main():
-    #non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
-    #norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
+    non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
+    norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
     dd_master, dd_sd= calculate_dd_osd(DD_FILE)
     print(dd_sd['3157104'])
     print(dd_master['govt']['3157101'])
-    #con_master= calculate_format_2_master(MASTER_FILE)
-    #write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master, dd_master)
+    con_master= calculate_format_2_master(MASTER_FILE)
+    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master, dd_master, dd_sd)
     
 if __name__== '__main__':
     main()
