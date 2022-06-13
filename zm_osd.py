@@ -5,6 +5,7 @@ CCC_FILE= 'ccc.txt'
 MASTER_FILE= 'master.csv'
 BILLING_FILE= 'billing.csv'
 OSD2_FILE= 'osd2.csv'
+DD_FILE= 'dd.csv'
 '''
 def create_ds_osd2(ccc_file):
     osd_slab= {'osd_5K': {}, 'osd_10K': {}, 'osd_50K': {}, 'osd_lakh': {}}
@@ -260,11 +261,29 @@ def calculate_format_2_master(master_file):
     print("format_2 : master sheet updated")
     return con_master
 
+def create_ds_dd(ccc_file):
+    dd_master= {'non_govt': {}, 'govt': {}}
+    '''with open(ccc_file, 'r') as f:
+        for line in f:
+            line= line.strip()
+            con_master[line]= {'D_Live': 0, 'D_TD': 0, 'D_PD': 0, 'C_Live': 0, 'C_TD': 0, 'C_PD': 0, 'I_Live': 0, 'I_TD': 0, 'I_PD': 0,\
+                               'stw_Live': 0, 'stw_TD': 0, 'stw_PD': 0, 'DTW_Live': 0, 'DTW_TD': 0, 'DTW_PD': 0, 'PHE_Live': 0,\
+                               'PHE_TD': 0, 'PHE_PD': 0, 'STR_Live': 0, 'STR_TD': 0, 'STR_PD': 0, 'oth_Live': 0, 'oth_TD': 0, 'oth_PD': 0}
+    '''
+    return dd_master
+
+def calculate_dd_osd(dd_file):
+    dd_master= create_ds_dd(CCC_FILE)
+    #pass
+    return dd_master
+
 def main():
-    non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
-    norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
-    con_master= calculate_format_2_master(MASTER_FILE)
-    write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master)
+    #non_govt_osd, govt_osd, osd_slab= calculate_osd(MASTER_FILE)
+    #norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
+    dd_master= calculate_dd_osd(DD_FILE)
+    print(dd_master)
+    #con_master= calculate_format_2_master(MASTER_FILE)
+    #write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master)
     
 if __name__== '__main__':
     main()
