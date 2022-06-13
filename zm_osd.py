@@ -149,7 +149,7 @@ def calculate_osd(master_file):
     with open(master_file, 'r') as f:
         masterDict= csv.DictReader(f)
         for item in masterDict:
-            if item['OSD_REMARK'].strip()== 'OSD' and item['CONN_STAT'].strip() in ('LIVE', 'DD'):
+            if item['OSD_REMARK'].strip()== 'OSD' and item['CONN_STAT'].strip() in ('LIVE', 'DD', 'TD'):
                 if item['GOVT_STAT']== 'NO':
                     non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_count']+= int(item['COUNT'])
                     non_govt_osd[item['CONN_STAT'].strip()][item['CCC_CODE']][item['TYPE'].strip()+'_osd']+= round(float(item['OSD'])/100000,5)
@@ -242,7 +242,7 @@ def calculate_format_2_master(master_file):
         masterDict= csv.DictReader(f)
         for item in masterDict:
             con_type= item['TYPE'].strip()
-            dis_stat= item['DIS_STAT'].strip()
+            dis_stat= item['CONN_STAT'].strip()
             count= int(item['COUNT'].strip())
             if dis_stat in ('Live', 'TD', 'PD'):
                 if con_type in ('C', 'D', 'DTW', 'I', 'PHE', 'STR'):
