@@ -286,8 +286,9 @@ def calculate_dd_osd(dd_file):
         for item in masterDict:
             govt_type, osd_slab= item['GOVT_STAT'].strip(), item['OSD_SLAB'].strip()
             count, sd, osd= int(item['COUNT'].strip()), float(item['SD'].strip()), float(item['OSD'].strip())
-            dd_master[govt_type][item['CCC_CODE']][osd_slab+ '_C']+= count
-            dd_master[govt_type][item['CCC_CODE']][osd_slab+ '_S']+= osd/100000
+            if item['CONN_STAT'].strip()== 'DD':
+                dd_master[govt_type][item['CCC_CODE']][osd_slab+ '_C']+= count
+                dd_master[govt_type][item['CCC_CODE']][osd_slab+ '_S']+= osd/100000
             
     return dd_master
 
