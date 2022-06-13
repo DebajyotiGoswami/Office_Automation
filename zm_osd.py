@@ -179,6 +179,12 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con
 
         df= pd.DataFrame.from_dict(govt_osd['LIVE'], orient= 'index')
         df.to_excel(writer, sheet_name= 'live_osd_govt', startrow= 1)
+        ########
+        df= pd.DataFrame.from_dict(non_govt_osd['TD'], orient= 'index')
+        df.to_excel(writer, sheet_name= 'TD_osd_non_govt', startrow= 1)
+
+        df= pd.DataFrame.from_dict(govt_osd['TD'], orient= 'index')
+        df.to_excel(writer, sheet_name= 'TD_osd_govt', startrow= 1)
         #########
         
         df= pd.DataFrame.from_dict(non_govt_osd['DD'], orient= 'index')
