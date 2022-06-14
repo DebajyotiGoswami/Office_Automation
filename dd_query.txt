@@ -31,11 +31,11 @@ WHEN (date(
      substr(char(DATE_OF_EFFECT),7,2)
   )  - 
   date(
-     substr(char(DECODE(discon_dt,0,'20000101')),1,4) concat 
+     substr(char(DECODE(discon_dt,0,'20000101', DISCON_DT)),1,4) concat 
      '-' concat 
-     substr (char(DECODE(discon_dt,0,'20000101')),5,2) concat 
+     substr (char(DECODE(discon_dt,0,'20000101',DISCON_DT)),5,2) concat 
      '-' concat 
-     substr(char(DECODE(discon_dt,0,'20000101')),7,2)
+     substr(char(DECODE(discon_dt,0,'20000101',DISCON_DT)),7,2)
   ))>730 THEN '>2YEARS'
 WHEN (date(
      substr(char(DATE_OF_EFFECT),1,4) concat 
@@ -45,11 +45,11 @@ WHEN (date(
      substr(char(DATE_OF_EFFECT),7,2)
   )  - 
   date(
-     substr(char(DECODE(discon_dt,0,'20000101')),1,4) concat 
+     substr(char(DECODE(discon_dt,0,'20000101',DISCON_DT)),1,4) concat 
      '-' concat 
-     substr (char(DECODE(discon_dt,0,'20000101')),5,2) concat 
+     substr (char(DECODE(discon_dt,0,'20000101',DISCON_DT)),5,2) concat 
      '-' concat 
-     substr(char(DECODE(discon_dt,0,'20000101')),7,2)
+     substr(char(DECODE(discon_dt,0,'20000101',DISCON_DT)),7,2)
   ))>150 THEN '>150 DAYS'
 ELSE 'OTHER'
 END AS DD_TIME,
@@ -94,11 +94,11 @@ WHEN (date(
      substr(char(DATE_OF_EFFECT),7,2)
   )  - 
   date(
-     substr(char(DECODE(discon_dt,0,'20000101')),1,4) concat 
+     substr(char(DECODE(discon_dt,0,'20000101',DISCON_DT)),1,4) concat 
      '-' concat 
-     substr (char(DECODE(discon_dt,0,'20000101')),5,2) concat 
+     substr (char(DECODE(discon_dt,0,'20000101',DISCON_DT)),5,2) concat 
      '-' concat 
-     substr(char(DECODE(discon_dt,0,'20000101')),7,2)
+     substr(char(DECODE(discon_dt,0,'20000101',DISCON_DT)),7,2)
   ))>730 THEN '>2YEARS'
 WHEN (date(
      substr(char(DATE_OF_EFFECT),1,4) concat 
@@ -108,11 +108,11 @@ WHEN (date(
      substr(char(DATE_OF_EFFECT),7,2)
   )  - 
   date(
-     substr(char(DECODE(discon_dt,0,'20000101')),1,4) concat 
+     substr(char(DECODE(discon_dt,0,'20000101',DISCON_DT)),1,4) concat 
      '-' concat 
-     substr (char(DECODE(discon_dt,0,'20000101')),5,2) concat 
+     substr (char(DECODE(discon_dt,0,'20000101',DISCON_DT)),5,2) concat 
      '-' concat 
-     substr(char(DECODE(discon_dt,0,'20000101')),7,2)
+     substr(char(DECODE(discon_dt,0,'20000101',DISCON_DT)),7,2)
   ))>150 THEN '>150 DAYS'
 ELSE 'OTHER'
 END,
