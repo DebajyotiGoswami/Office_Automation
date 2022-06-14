@@ -266,7 +266,7 @@ def calculate_format_2_master(master_file):
             con_type= item['TYPE'].strip()
             dis_stat= item['CONN_STAT'].strip()
             count= int(item['COUNT'].strip())
-            if dis_stat in ('Live', 'TD', 'PD'):
+            if dis_stat in ('Live', 'TD'):
                 if con_type in ('C', 'D', 'DTW', 'I', 'PHE', 'STR'):
                     con_master[item['CCC_CODE']][con_type + '_' + dis_stat]+= count
                 elif con_type in ('A', 'STW'):
