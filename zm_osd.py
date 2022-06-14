@@ -253,9 +253,9 @@ def create_ds_master(ccc_file):
     with open(ccc_file, 'r') as f:
         for line in f:
             line= line.strip()
-            con_master[line]= {'D_Live': 0, 'D_TD': 0, 'D_PD': 0, 'C_Live': 0, 'C_TD': 0, 'C_PD': 0, 'I_Live': 0, 'I_TD': 0, 'I_PD': 0,\
-                               'stw_Live': 0, 'stw_TD': 0, 'stw_PD': 0, 'DTW_Live': 0, 'DTW_TD': 0, 'DTW_PD': 0, 'PHE_Live': 0,\
-                               'PHE_TD': 0, 'PHE_PD': 0, 'STR_Live': 0, 'STR_TD': 0, 'STR_PD': 0, 'oth_Live': 0, 'oth_TD': 0, 'oth_PD': 0}
+            con_master[line]= {'D_Live': 0, 'D_TD': 0, 'C_Live': 0, 'C_TD': 0, 'I_Live': 0, 'I_TD': 0, \
+                               'stw_Live': 0, 'stw_TD': 0, 'DTW_Live': 0, 'DTW_TD': 0, 'PHE_Live': 0,\
+                               'PHE_TD': 0, 'STR_Live': 0, 'STR_TD': 0, 'oth_Live': 0, 'oth_TD': 0}
     return con_master
 
 def calculate_format_2_master(master_file):
@@ -307,6 +307,7 @@ def main():
     norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
     dd_master, dd_sd= calculate_dd_osd(DD_FILE)
     con_master= calculate_format_2_master(MASTER_FILE)
+    print(con_master['3157102'])
     write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master, dd_master, dd_sd)
     
 if __name__== '__main__':
