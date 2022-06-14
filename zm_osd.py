@@ -307,7 +307,6 @@ def main():
     norm_bill, def_bill, bill_master= calculate_billing(BILLING_FILE)
     dd_master, dd_sd= calculate_dd_osd(DD_FILE)
     con_master= calculate_format_2_master(MASTER_FILE)
-    print(con_master['3157102'])
     write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master, dd_master, dd_sd)
     
 if __name__== '__main__':
