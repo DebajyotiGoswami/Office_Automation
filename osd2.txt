@@ -7,7 +7,7 @@ when outstanding>5000 AND CONN_STAT='LIVE' AND GOVT_STAT='NO' then 'osd_5K'
 end OSD_SLAB,
 base_class, count(distinct con_id) COUNT, sum(outstanding) OSD
 from isudata.rep_biz_master_detail
-where substr(ccc_Code,1,4) in ('3157', '3122', '3113','3155','3153','3152','3125')
+where substr(ccc_Code,1,4) in ('3157', '3122', '3113','3153','3152')
 group by ccc_code, 
 case
 when outstanding>100000 AND CONN_STAT='LIVE' AND GOVT_STAT='NO' then 'osd_lakh'
