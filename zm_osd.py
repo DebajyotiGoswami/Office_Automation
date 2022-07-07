@@ -63,8 +63,7 @@ def create_ds_billing(ccc_file):
     with open(ccc_file, 'r') as f:
         for line in f:
             line= line.strip()
-            norm_bill['1']['D'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '5.11_unit': 0, '7.25_count': 0, '7.25_unit': 0}
-            norm_bill['1']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '5.11_unit': 0, '7.25_count': 0, '7.25_unit': 0}
+            norm_bill['1'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.11_count': 0, '5.11_unit': 0, '7.25_count': 0, '7.25_unit': 0}
             norm_bill['3']['C'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '5.100_unit': 0, '7.500_count': 0, '7.500_unit': 0}
             norm_bill['3']['I'][line]= {'1tot': 0, '2.0_norm': 0, '3.0_adv': 0, '4.0_temp': 0, '5.100_count': 0, '5.100_unit': 0, '7.500_count': 0, '7.500_unit': 0}
             def_bill['1'][line]= {'1.tot': 0, '11_count': 0, '11_unit': 0, '25_count': 0,'25_unit': 0, '50_count': 0, '50_unit': 0}
@@ -101,11 +100,18 @@ def calculate_billing(billing_file):
         for item in billingDict:
             if item['MET_STATUS']== 'HEALTHY':
                 try:
-                    norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']]['1tot']+= int(item['COUNT'])
-                    norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']][item['TYPE'].strip()]+= int(item['COUNT'])
-                    unit= item['TYPE'].replace('_count', '_unit').strip()
-                    if unit in norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']]:
-                        norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']][unit]+= float(item['UNIT'])
+                    if item['CONN_PHASE'] == '3':
+                        norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']]['1tot']+= int(item['COUNT'])
+                        norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']][item['TYPE'].strip()]+= int(item['COUNT'])
+                        unit= item['TYPE'].replace('_count', '_unit').strip()
+                        if unit in norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']]:
+                            norm_bill[item['CONN_PHASE']][item['BASE_CLASS']][item['CCC_CODE']][unit]+= float(item['UNIT'])
+                    else:
+                        norm_bill[item['CONN_PHASE']][item['CCC_CODE']]['1tot']+= int(item['COUNT'])
+                        norm_bill[item['CONN_PHASE']][item['CCC_CODE']][item['TYPE'].strip()]+= int(item['COUNT'])
+                        unit= item['TYPE'].replace('_count', '_unit').strip()
+                        if unit in norm_bill[item['CONN_PHASE']][item['CCC_CODE']]:
+                            norm_bill[item['CONN_PHASE']][item['CCC_CODE']][unit]+= float(item['UNIT'])
                 except:
                     pass
             elif item['BASE_CLASS'] in ('D', 'C', 'I'):
@@ -223,20 +229,17 @@ def write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con
         df.to_excel(writer, sheet_name= 'DIS_ORD_lakh', startrow= 1)
         ##########
 
-        df= pd.DataFrame.from_dict(norm_bill['1']['D'], orient= 'index')
-        df.to_excel(writer, sheet_name= '1_PH_DOM_BILL', startrow= 1)
+        df= pd.DataFrame.from_dict(norm_bill['1'], orient= 'index')
+        df.to_excel(writer, sheet_name= '1_PH_D_C_BILL', startrow= 1)
 
-        df= pd.DataFrame.from_dict(norm_bill['1']['C'], orient= 'index')
-        df.to_excel(writer, sheet_name= '1_PH_COM_BILL', startrow= 1)
+        df= pd.DataFrame.from_dict(def_bill['1'], orient= 'index')
+        df.to_excel(writer, sheet_name= '1_PH_DEF_BILL', startrow= 1)
 
         df= pd.DataFrame.from_dict(norm_bill['3']['C'], orient= 'index')
         df.to_excel(writer, sheet_name= '3_PH_COM_BILL', startrow= 1)
 
         df= pd.DataFrame.from_dict(norm_bill['3']['I'], orient= 'index')
         df.to_excel(writer, sheet_name= '3_PH_IND_BILL', startrow= 1)
-
-        df= pd.DataFrame.from_dict(def_bill['1'], orient= 'index')
-        df.to_excel(writer, sheet_name= '1_PH_DEF_BILL', startrow= 1)
 
         df= pd.DataFrame.from_dict(def_bill['3'], orient= 'index')
         df.to_excel(writer, sheet_name= '3_PH_DEF_BILL', startrow= 1)
