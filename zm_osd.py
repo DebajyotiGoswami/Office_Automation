@@ -308,6 +308,7 @@ def main():
     dd_master, dd_sd= calculate_dd_osd(DD_FILE)
     con_master= calculate_format_2_master(MASTER_FILE)
     write_osd_billing(non_govt_osd, govt_osd, norm_bill, def_bill, osd_slab, con_master, bill_master, dd_master, dd_sd)
+    input("All procedure completed. Press ENTER ")
     
 if __name__== '__main__':
     main()
